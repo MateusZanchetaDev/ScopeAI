@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Calendar, Users, Clock, Upload, TrendingUp, CheckCircle2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Calendar, Users, Clock, Upload, TrendingUp, CheckCircle2, AlertCircle, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 interface MeetingData {
@@ -52,6 +50,8 @@ const MeetingDetail = () => {
   const [analyzing, setAnalyzing] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [uploadingTranscript, setUploadingTranscript] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchMeeting();
@@ -85,28 +85,44 @@ const MeetingDetail = () => {
     }
   };
 
-  const handleUploadTranscript = async () => {
-    if (!transcript.trim()) {
-      toast.error("Por favor, insira a transcrição da reunião");
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['text/plain', 'application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Por favor, envie um arquivo .txt ou .pdf");
       return;
     }
 
+    setUploadedFile(file);
     setUploadingTranscript(true);
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
+      let content = "";
+      
+      if (file.type === 'text/plain') {
+        content = await file.text();
+      } else {
+        toast.error("Suporte para PDF será adicionado em breve. Por favor, use arquivos .txt");
+        setUploadingTranscript(false);
+        return;
+      }
+
       const { error } = await supabase
         .from("meeting_transcripts")
         .upsert({
           meeting_id: id,
-          content: transcript,
+          content: content,
           uploaded_by: user.id,
         });
 
       if (error) throw error;
 
+      setTranscript(content);
       toast.success("Transcrição enviada com sucesso!");
       fetchMeeting();
     } catch (error) {
@@ -269,43 +285,53 @@ const MeetingDetail = () => {
                   Transcrição da Reunião
                 </CardTitle>
                 <CardDescription>
-                  {hasTranscript ? "Transcrição já enviada" : "Cole a transcrição da reunião para análise"}
+                  {hasTranscript ? "Transcrição enviada com sucesso" : "Faça upload de um arquivo .txt ou .pdf com a transcrição"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="transcript">Transcrição</Label>
-                    <Textarea
-                      id="transcript"
-                      placeholder="Cole aqui a transcrição completa da reunião..."
-                      value={transcript}
-                      onChange={(e) => setTranscript(e.target.value)}
-                      rows={10}
-                      disabled={hasTranscript && hasAnalysis}
-                    />
-                  </div>
-
-                  {!hasTranscript && (
-                    <Button
-                      onClick={handleUploadTranscript}
-                      disabled={uploadingTranscript || !transcript.trim()}
-                      className="w-full gap-2"
-                    >
-                      <Upload className="h-4 w-4" />
-                      {uploadingTranscript ? "Enviando..." : "Enviar Transcrição"}
-                    </Button>
-                  )}
-
-                  {hasTranscript && !hasAnalysis && (
-                    <Button
-                      onClick={handleAnalyze}
-                      disabled={analyzing}
-                      className="w-full gap-2"
-                    >
-                      <TrendingUp className="h-4 w-4" />
-                      {analyzing ? "Analisando..." : "Gerar Análise com IA"}
-                    </Button>
+                  {!hasTranscript ? (
+                    <>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".txt,.pdf"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                      <Button
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploadingTranscript}
+                        className="w-full gap-2"
+                        variant="outline"
+                      >
+                        <FileText className="h-4 w-4" />
+                        {uploadingTranscript ? "Enviando..." : "Selecionar Arquivo (.txt ou .pdf)"}
+                      </Button>
+                      {uploadedFile && (
+                        <p className="text-sm text-muted-foreground text-center">
+                          Arquivo selecionado: {uploadedFile.name}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 text-success">
+                        <CheckCircle2 className="h-5 w-5" />
+                        <span className="font-medium">Transcrição enviada</span>
+                      </div>
+                      
+                      {!hasAnalysis && (
+                        <Button
+                          onClick={handleAnalyze}
+                          disabled={analyzing}
+                          className="w-full gap-2"
+                        >
+                          <TrendingUp className="h-4 w-4" />
+                          {analyzing ? "Analisando com IA..." : "Gerar Resultado"}
+                        </Button>
+                      )}
+                    </div>
                   )}
                 </div>
               </CardContent>

@@ -28,7 +28,7 @@ const Navbar = () => {
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center gap-2">
               <Calendar className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold text-foreground">MeetingAI</span>
+              <span className="text-xl font-bold text-foreground">ScopeAI</span>
             </Link>
             
             <div className="hidden md:flex items-center gap-2">

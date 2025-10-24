@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -7,13 +7,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Plus, X } from "lucide-react";
+import { ArrowLeft, Plus, X, UserPlus } from "lucide-react";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 interface AgendaItem {
   title: string;
   duration_minutes: number;
   context: string;
+}
+
+interface Profile {
+  id: string;
+  full_name: string;
+  email: string;
 }
 
 const NewMeeting = () => {
@@ -25,6 +32,45 @@ const NewMeeting = () => {
   const [agendaItems, setAgendaItems] = useState<AgendaItem[]>([
     { title: "", duration_minutes: 10, context: "" },
   ]);
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [availableUsers, setAvailableUsers] = useState<Profile[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .order("full_name");
+
+      if (error) throw error;
+      setAvailableUsers(data || []);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const addParticipant = (userId: string) => {
+    if (!participants.includes(userId)) {
+      setParticipants([...participants, userId]);
+      setSearchTerm("");
+    }
+  };
+
+  const removeParticipant = (userId: string) => {
+    setParticipants(participants.filter((id) => id !== userId));
+  };
+
+  const filteredUsers = availableUsers.filter(
+    (user) =>
+      !participants.includes(user.id) &&
+      (user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   const addAgendaItem = () => {
     setAgendaItems([...agendaItems, { title: "", duration_minutes: 10, context: "" }]);
@@ -62,6 +108,21 @@ const NewMeeting = () => {
         .single();
 
       if (meetingError) throw meetingError;
+
+      // Add participants
+      if (participants.length > 0) {
+        const participantsData = participants.map((userId) => ({
+          meeting_id: meeting.id,
+          user_id: userId,
+          confirmed: false,
+        }));
+
+        const { error: participantsError } = await supabase
+          .from("meeting_participants")
+          .insert(participantsData);
+
+        if (participantsError) throw participantsError;
+      }
 
       // Create agenda items
       const validAgendaItems = agendaItems.filter((item) => item.title.trim() !== "");
@@ -149,6 +210,56 @@ const NewMeeting = () => {
                     onChange={(e) => setScheduledDate(e.target.value)}
                     required
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Participantes</Label>
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Input
+                        placeholder="Buscar usuários por nome ou email..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                      {searchTerm && filteredUsers.length > 0 && (
+                        <div className="absolute z-10 w-full mt-1 bg-background border rounded-md shadow-lg max-h-60 overflow-auto">
+                          {filteredUsers.map((user) => (
+                            <button
+                              key={user.id}
+                              type="button"
+                              onClick={() => addParticipant(user.id)}
+                              className="w-full px-4 py-2 text-left hover:bg-accent flex items-center justify-between"
+                            >
+                              <div>
+                                <p className="font-medium">{user.full_name}</p>
+                                <p className="text-sm text-muted-foreground">{user.email}</p>
+                              </div>
+                              <UserPlus className="h-4 w-4" />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    {participants.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {participants.map((userId) => {
+                          const user = availableUsers.find((u) => u.id === userId);
+                          return user ? (
+                            <Badge key={userId} variant="secondary" className="gap-1">
+                              {user.full_name}
+                              <button
+                                type="button"
+                                onClick={() => removeParticipant(userId)}
+                                className="ml-1 hover:text-destructive"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </Badge>
+                          ) : null;
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
