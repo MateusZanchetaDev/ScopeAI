@@ -44,11 +44,11 @@ const Navbar = () => {
               </Button>
               
               <Button
-                variant={isActive("/analytics") ? "default" : "ghost"}
+                variant={isActive("/analises") ? "default" : "ghost"}
                 asChild
                 className="gap-2"
               >
-                <Link to="/analytics">
+                <Link to="/analises">
                   <BarChart3 className="h-4 w-4" />
                   Análises
                 </Link>
