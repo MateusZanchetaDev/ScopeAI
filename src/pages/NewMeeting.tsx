@@ -328,7 +328,7 @@ const NewMeeting = () => {
               </div>
 
               <div className="flex gap-4">
-                <Button type="button" variant="outline" onClick={() => navigate("/")} className="flex-1">
+                <Button type="button" variant="outline" onClick={() => navigate("/dashboard")} className="flex-1">
                   Cancelar
                 </Button>
                 <Button type="submit" disabled={loading} className="flex-1">

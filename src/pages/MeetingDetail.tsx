@@ -174,20 +174,20 @@ const MeetingDetail = () => {
       }));
 
       // Salva o resultado no Supabase
-      const { error: analysisError } = await supabase
-        .from("meeting_analysis")
-        .upsert({
-          meeting_id: id,
-          productivity_score: analysisData.productivity_score,
-          summary: analysisData.summary,
-          decisions: analysisData.decisions,
-          action_items: analysisData.action_items,
-          agenda_adherence: analysisData.agenda_adherence,
-          recommendations: analysisData.recommendations,
-          participant_analysis: analysisData.participant_analysis,
-        });
+      // const { error: analysisError } = await supabase
+      //   .from("meeting_analysis")
+      //   .upsert({
+      //     meeting_id: id,
+      //     productivity_score: analysisData.productivity_score,
+      //     summary: analysisData.summary,
+      //     decisions: analysisData.decisions,
+      //     action_items: analysisData.action_items,
+      //     agenda_adherence: analysisData.agenda_adherence,
+      //     recommendations: analysisData.recommendations,
+      //     participant_analysis: analysisData.participant_analysis,
+      //   });
 
-      if (analysisError) throw analysisError;
+      // if (analysisError) throw analysisError;
 
 
       toast.success("Análise concluída! O resultado foi salvo e atualizado.");
@@ -325,7 +325,7 @@ const MeetingDetail = () => {
                 <Upload className="h-5 w-5" /> Transcrição da Reunião
               </CardTitle>
               <CardDescription>
-                {hasTranscript ? "Transcrição enviada com sucesso" : "Faça upload de um arquivo .txt ou .pdf"}
+                {hasTranscript ? "Transcrição enviada com sucesso" : "Faça upload de um arquivo .txt"}
               </CardDescription>
             </CardHeader>
             <CardContent>

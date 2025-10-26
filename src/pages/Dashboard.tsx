@@ -66,14 +66,30 @@ const Dashboard = () => {
   const calculateStats = (meetingsData: Meeting[]) => {
     const total = meetingsData.length;
     const scheduled = meetingsData.filter((m) => m.status === "scheduled").length;
-    const completed = meetingsData.filter((m) => m.status === "completed");
-    
-    const scores = completed
+
+    // Scores do banco (apenas reuniões concluídas)
+    const completedScores = meetingsData
+      .filter((m) => m.status === "completed")
       .map((m) => m.meeting_analysis?.[0]?.productivity_score)
       .filter((s): s is number => s !== undefined);
-    
-    const avgScore = scores.length > 0
-      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+
+    // Scores do localStorage
+    const localStorageScores: number[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith("analiseReuniao_")) {
+        const data = JSON.parse(localStorage.getItem(key) || "{}");
+        const score = parseFloat(data.productivity_score);
+        if (!isNaN(score)) localStorageScores.push(score);
+      }
+    }
+
+    // Combina ambos
+    const allScores = [...completedScores, ...localStorageScores];
+
+    // Média com 2 casas decimais
+    const avgScore = allScores.length > 0
+      ? Number((allScores.reduce((a, b) => a + b, 0) / allScores.length).toFixed(2))
       : 0;
 
     setStats({
@@ -82,6 +98,7 @@ const Dashboard = () => {
       scheduledMeetings: scheduled,
     });
   };
+
 
   if (loading) {
     return (
@@ -97,7 +114,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -106,7 +123,7 @@ const Dashboard = () => {
               Gerencie suas reuniões e acompanhe a produtividade
             </p>
           </div>
-          
+
           <Button onClick={() => navigate("/meeting/new")} size="lg" className="gap-2">
             <Plus className="h-5 w-5" />
             Nova Reunião
@@ -120,14 +137,14 @@ const Dashboard = () => {
             value={stats.totalMeetings}
             icon={<Calendar className="h-5 w-5" />}
           />
-          
+
           <ScoreCard
             title="Score Médio"
             value={`${stats.avgScore}/10`}
             subtitle="Produtividade geral"
             icon={<TrendingUp className="h-5 w-5" />}
           />
-          
+
           <ScoreCard
             title="Reuniões Agendadas"
             value={stats.scheduledMeetings}
@@ -138,7 +155,7 @@ const Dashboard = () => {
         {/* Meetings Grid */}
         <div>
           <h2 className="text-2xl font-bold mb-4">Suas Reuniões</h2>
-          
+
           {meetings.length === 0 ? (
             <div className="text-center py-12 bg-card rounded-lg border border-border">
               <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
