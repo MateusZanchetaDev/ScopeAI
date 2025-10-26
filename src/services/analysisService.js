@@ -1,28 +1,28 @@
-export async function uploadAnalysisFile(file) {
-  // Simulação do envio e processamento
-  await new Promise((res) => setTimeout(res, 2000));
+import { supabase } from "@/integrations/supabase/client";
 
-  // Aqui futuramente chamará a API da OpenAI/Claude
-  // const formData = new FormData();
-  // formData.append("file", file);
-  // const response = await fetch("/api/analyze", { method: "POST", body: formData });
-  // return await response.json();
+export const uploadAnalysisFile = async (file) => {
+  if (!file) throw new Error("Nenhum arquivo selecionado");
 
-  // Mock de resultado
-  return {
-    score: 8.5,
-    resumo:
-      "A reunião abordou todos os tópicos principais, com boa organização e decisões práticas.",
-    decisoes: [
-      "Aprovação do plano de metas do Q4",
-      "Revisão de orçamento para marketing",
-    ],
-    acoes: [
-      "Pedro – enviar relatório final até sexta",
-      "Carla – revisar proposta de fornecedores",
-    ],
-    aderencia: "A pauta foi seguida com 90% de coerência.",
-    recomendacoes:
-      "Reduzir tempo de discussão em tópicos menores e definir prazos mais claros.",
-  };
-}
+  const text = await file.text();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Usuário não autenticado");
+
+  // Salva transcrição no banco
+  const { data, error } = await supabase
+    .from("meeting_transcripts")
+    .insert([{ content: text, uploaded_by: user.id }])
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  // Chama a função de IA
+  const { data: analysis, error: aiError } = await supabase.functions.invoke("analyze-meeting", {
+    body: { transcriptId: data.id },
+  });
+
+  if (aiError) throw aiError;
+
+  return analysis;
+};
