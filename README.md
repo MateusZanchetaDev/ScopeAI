@@ -17,6 +17,8 @@ Esse é um arquivo de configuração que contém as chaves API de IA.
  
 <img width="741" height="405" alt="image" src="https://github.com/user-attachments/assets/4cb0c364-cb3b-4b36-af6c-499c92f16566" />
 
+
+
 <img width="606" height="124" alt="image" src="https://github.com/user-attachments/assets/ea09d24a-890c-4026-a929-19b31234fa0f" />
 
 Colar o conteúdo abaixo no arquivo, e salvar.
