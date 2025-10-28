@@ -11,15 +11,6 @@ ________________________________________
 3.	Open folder (abrir o arquivo clonado do repositório)
 ________________________________________
 3) Rodar o código localmente
-Criar o arquivo .env
-Esse é um arquivo de configuração que contém as chaves API de IA.
-(OBS Segurança: Utilizamos a chave de conta de um participante de nosso grupo, portanto esta chave é um dado sensível e não deve ser utilizado em outro meio).
- 
-<img width="741" height="405" alt="image" src="https://github.com/user-attachments/assets/4cb0c364-cb3b-4b36-af6c-499c92f16566" />
-
-
-
-<img width="606" height="124" alt="image" src="https://github.com/user-attachments/assets/ea09d24a-890c-4026-a929-19b31234fa0f" />
 
 Colar o conteúdo abaixo no arquivo, e salvar.
  
