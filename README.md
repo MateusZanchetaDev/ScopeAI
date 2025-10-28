@@ -13,8 +13,6 @@ ________________________________________
 3) Rodar o código localmente
 
 Colar o conteúdo abaixo no arquivo, e salvar.
- 
-<img width="886" height="265" alt="image" src="https://github.com/user-attachments/assets/7b42421f-be18-4cab-b52b-68f19b9a4740" />
 
 Node
 1.	Para executar o código é necessário ter o node_modules.
@@ -59,9 +57,9 @@ Para rodar o backend da aplicação.
 <img width="325" height="416" alt="image" src="https://github.com/user-attachments/assets/e75030ef-39da-4781-b20b-6ce7359fd738" />
 
 3.	Funcionalidade principal: executar fluxo principal do produto (criar escopo, gerar transcrição, emitir relatório) e confirmar resultado esperado.
-o	Vídeo em anexo.
-o	Para o preenchimento do escopo, disponibilizamos um exemplo para preenchimento, que está em anexo.
-o	Para gerar o compare, disponibilizamos um arquivo em .txt da transcrição da reunião, para realizar o upload na ferramenta e comparar o escopo com a transcrição.
+Ao final vamos colocar um exemplo de escopo e transcrição para realizar o upload na ferramenta e comparar o escopo com a transcrição.
+[1-🗂️ Exemplo para preencher o escopo da reunião.txt](https://github.com/user-attachments/files/23198746/1-.Exemplo.para.preencher.o.escopo.da.reuniao.txt)
+[Uploading 🎤 TRANSCRIÇÃO DA REUNIÃO.txt…]()
 ________________________________________
 7) Critérios de aceitação (o que significa “validado”)
 •	Se o processamento da IA na comparação entre Escopo Reunião + Transcrição, foi realizada com sucesso, e conseguir gerar o resumo e o Score abordado.
