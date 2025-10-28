@@ -1,73 +1,87 @@
-# Welcome to your Lovable project
+Instruções para execução do Scope AI
 
-## Project info
+1) Antes de começar (pré-requisitos)
+•	Git instalado.
+•	Node.js (v16+), npm
+•	Editor (VS Code).
+________________________________________
+2) Obter o código
+1.	git clone https://github.com/MateusZanchetaDev/ScopeAI.git
+2.	cd ScopeAI
+3.	Open folder (abrir o arquivo clonado do repositório)
+________________________________________
+3) Rodar o código localmente
+Criar o arquivo .env
+Esse é um arquivo de configuração que contém as chaves API de IA.
+(OBS Segurança: Utilizamos a chave de conta de um participante de nosso grupo, portanto esta chave é um dado sensível e não deve ser utilizado em outro meio).
+ 
+<img width="741" height="405" alt="image" src="https://github.com/user-attachments/assets/4cb0c364-cb3b-4b36-af6c-499c92f16566" />
 
-**URL**: https://lovable.dev/projects/1120af4f-452a-4b08-bff2-30e59e1f880b
+<img width="606" height="124" alt="image" src="https://github.com/user-attachments/assets/ea09d24a-890c-4026-a929-19b31234fa0f" />
 
-## How can I edit this code?
+Colar o conteúdo abaixo no arquivo, e salvar.
+ 
+<img width="886" height="265" alt="image" src="https://github.com/user-attachments/assets/7b42421f-be18-4cab-b52b-68f19b9a4740" />
 
-There are several ways of editing your application.
+==============================================================================================================================================================
 
-**Use Lovable**
+VITE_SUPABASE_PROJECT_ID="mzmxqjgnbqbjhrlanvxv"
+VITE_SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16bXhxamduYnFiamhybGFudnh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEyMzAzMzIsImV4cCI6MjA3NjgwNjMzMn0.9XwsxI2bzPxjEU26Vsk4rYUnLezfIX6OdbMexpvprBc"
+VITE_SUPABASE_URL="https://mzmxqjgnbqbjhrlanvxv.supabase.co/"
+GOOGLE_API_KEY="AIzaSyBC5w6vuQsn9MDe0GYPG7OhH_umG0oCZxw"
+PORT=5001
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1120af4f-452a-4b08-bff2-30e59e1f880b) and start prompting.
+==============================================================================================================================================================
 
-Changes made via Lovable will be committed automatically to this repo.
 
-**Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Node
+1.	Para executar o código é necessário ter o node_modules.
 
-Follow these steps:
+ <img width="458" height="198" alt="image" src="https://github.com/user-attachments/assets/2827806a-bb49-466d-b761-bb53c178f0be" />
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+É necessário executar no terminal o cmd: npm install
+Após:
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+<img width="495" height="208" alt="image" src="https://github.com/user-attachments/assets/d3ebe409-3b76-47ef-a67e-d630439afa20" />
 
-# Step 3: Install the necessary dependencies.
-npm i
+2.	Rodar o servidor local, executar no terminal o cmd: npm run dev
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+ <img width="802" height="289" alt="image" src="https://github.com/user-attachments/assets/fde13cef-1052-4d56-ab11-de1447637161" />
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Backend
+Para rodar o backend da aplicação.
+1.	Abra um novo cmd no terminal 
 
-**Use GitHub Codespaces**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+<img width="520" height="255" alt="image" src="https://github.com/user-attachments/assets/f5d56008-aaeb-4a56-8b2e-03098c9b1997" />
 
-## What technologies are used for this project?
 
-This project is built with:
+2.	Execute o comando: node src\server.js
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
 
-## How can I deploy this project?
+<img width="886" height="206" alt="image" src="https://github.com/user-attachments/assets/c221eb17-bb6e-4732-836a-d56a25075a5c" />
 
-Simply open [Lovable](https://lovable.dev/projects/1120af4f-452a-4b08-bff2-30e59e1f880b) and click on Share -> Publish.
 
-## Can I connect a custom domain to my Lovable project?
+3.	Abra o link do localhost:
 
-Yes, you can!
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+<img width="622" height="228" alt="image" src="https://github.com/user-attachments/assets/debb22c2-39a6-4a7d-963b-ec0f2ddfc49a" />
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+5) Como validar a solução?
+1.	Smoke test: abrir frontend e confirmar página inicial carrega.
+2.	Login/Registro: criar usuário, fazer login.
+
+
+<img width="325" height="416" alt="image" src="https://github.com/user-attachments/assets/e75030ef-39da-4781-b20b-6ce7359fd738" />
+
+3.	Funcionalidade principal: executar fluxo principal do produto (criar escopo, gerar transcrição, emitir relatório) e confirmar resultado esperado.
+o	Vídeo em anexo.
+o	Para o preenchimento do escopo, disponibilizamos um exemplo para preenchimento, que está em anexo.
+o	Para gerar o compare, disponibilizamos um arquivo em .txt da transcrição da reunião, para realizar o upload na ferramenta e comparar o escopo com a transcrição.
+________________________________________
+7) Critérios de aceitação (o que significa “validado”)
+•	Se o processamento da IA na comparação entre Escopo Reunião + Transcrição, foi realizada com sucesso, e conseguir gerar o resumo e o Score abordado.
