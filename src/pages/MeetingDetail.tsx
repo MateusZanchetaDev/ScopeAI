@@ -91,7 +91,7 @@ const MeetingDetail = () => {
       if (!user) throw new Error("Usuário não autenticado");
 
       let content = "";
-      
+
       if (file.type === 'text/plain') {
         content = await file.text();
       } else {
@@ -112,7 +112,7 @@ const MeetingDetail = () => {
       if (error) throw error;
 
       setTranscript(content);
-      toast.success("Transcrição enviada com sucesso!");
+      //toast.success("Transcrição enviada com sucesso!");
 
       // Chama análise de IA automaticamente
       await handleAnalyze(file, content);
@@ -136,7 +136,14 @@ const MeetingDetail = () => {
 
     try {
       setAnalyzing(true);
-      toast.info("Analisando reunião com IA...");
+      toast.custom((t) => (
+        <div
+          className="bg-yellow-400 text-black font-bold text-lg p-6 rounded-xl shadow-lg"
+        >
+          Analisando reunião com IA...
+        </div>
+      ));
+
 
       const formData = new FormData();
       if (file) {
@@ -144,7 +151,7 @@ const MeetingDetail = () => {
       }
       formData.append("scopeText", scopeText || transcript);
 
-      formData.append("meetingId", id as string); 
+      formData.append("meetingId", id as string);
       formData.append("meetingTitle", meeting?.title || "Reunião Sem Título");
 
       const response = await fetch("http://localhost:5001/analyze", {
@@ -167,11 +174,15 @@ const MeetingDetail = () => {
       };
 
       // Salva no localStorage para a AnalysisPage
-      localStorage.setItem(`analiseReuniao_${id}`, JSON.stringify({
-        productivity_score: analysisData.productivity_score,
-        summary: analysisData.summary,
-        meetingTitle: meeting?.title, // adiciona título da reunião
-      }));
+      localStorage.setItem(
+        `analiseReuniao_${id}`,
+        JSON.stringify({
+          productivity_score: analysisData.productivity_score,
+          summary: analysisData.summary,
+          meetingTitle: meeting?.title,
+          createdAt: Date.now() // adiciona timestamp
+        })
+      );
 
       // Salva o resultado no Supabase
       // const { error: analysisError } = await supabase
@@ -190,9 +201,19 @@ const MeetingDetail = () => {
       // if (analysisError) throw analysisError;
 
 
-      toast.success("Análise concluída! O resultado foi salvo e atualizado.");
-      await fetchMeeting(); 
+      toast.custom((t) => (
+        <div
+          className="bg-green-600 text-white font-bold text-lg p-6 rounded-xl shadow-lg"
+        >
+          Análise concluída! O resultado foi salvo e atualizado.
+        </div>
+      ));
 
+      await fetchMeeting();
+
+      setTimeout(() => {
+        navigate("/analises");
+      }, 2000);
     } catch (err) {
       console.error("Erro ao analisar reunião:", err);
       toast.error("Erro ao analisar reunião com IA. Verifique o backend.");
@@ -209,7 +230,7 @@ const MeetingDetail = () => {
   };
 
   // --- Renderização ---
-  
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -239,7 +260,7 @@ const MeetingDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <Button
           variant="ghost"
@@ -273,7 +294,7 @@ const MeetingDetail = () => {
                 minute: "2-digit",
               })}</span>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               <span>Organizador: {meeting.profiles.full_name}</span>
@@ -283,7 +304,7 @@ const MeetingDetail = () => {
 
         {/* 2. Conteúdo Principal em Fluxo Vertical */}
         <div className="space-y-6">
-          
+
           {/* 2a. Agenda (Pauta) - Ocupa a largura total */}
           <Card>
             <CardHeader>
@@ -364,112 +385,112 @@ const MeetingDetail = () => {
               )}
             </CardContent>
           </Card>
-          
+
           {/* 2c. Resultados da Análise - Agora em uma grade de 2/1 coluna abaixo do Upload */}
           {hasAnalysis && analysis && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                {/* Coluna Principal da Análise (2/3) */}
-                <div className="lg:col-span-2 space-y-6">
-                    <Card>
-                        <CardHeader>
-                        <div className="flex items-center justify-between">
-                            <CardTitle>Resumo da Reunião</CardTitle>
-                            <Badge className={getScoreBadgeColor(analysis.productivity_score)}>
-                            Score: {analysis.productivity_score.toFixed(1)}/10
-                            </Badge>
-                        </div>
-                        </CardHeader>
-                        <CardContent>
-                        <p className="text-muted-foreground whitespace-pre-wrap">{analysis.summary}</p>
-                        </CardContent>
-                    </Card>
 
-                    <Card>
-                        <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <CheckCircle2 className="h-5 w-5 text-success" />
-                            Decisões Tomadas
-                        </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                        {analysis.decisions.length === 0 ? (
-                            <p className="text-muted-foreground">Nenhuma decisão foi tomada</p>
-                        ) : (
-                            <ul className="space-y-2">
-                            {analysis.decisions.map((decision: any, index: number) => (
-                                <li key={index} className="flex items-start gap-2">
-                                <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
-                                <div>
-                                    <p>{decision.decision}</p>
-                                    {decision.responsible && (
-                                    <p className="text-sm text-muted-foreground">
-                                        Responsável: {decision.responsible}
-                                    </p>
-                                    )}
-                                </div>
-                                </li>
-                            ))}
-                            </ul>
-                        )}
-                        </CardContent>
-                    </Card>
+              {/* Coluna Principal da Análise (2/3) */}
+              <div className="lg:col-span-2 space-y-6">
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>Resumo da Reunião</CardTitle>
+                      <Badge className={getScoreBadgeColor(analysis.productivity_score)}>
+                        Score: {analysis.productivity_score.toFixed(1)}/10
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground whitespace-pre-wrap">{analysis.summary}</p>
+                  </CardContent>
+                </Card>
 
-                    <Card>
-                        <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <AlertCircle className="h-5 w-5 text-primary" />
-                            Itens de Ação
-                        </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                        {analysis.action_items.length === 0 ? (
-                            <p className="text-muted-foreground">Nenhum item de ação definido</p>
-                        ) : (
-                            <ul className="space-y-3">
-                            {analysis.action_items.map((item: any, index: number) => (
-                                <li key={index} className="border-l-2 border-primary pl-3">
-                                <p className="font-medium">{item.task}</p>
-                                <div className="flex flex-wrap gap-2 mt-1 text-sm text-muted-foreground">
-                                    {item.responsible && <span>Responsável: {item.responsible}</span>}
-                                    {item.priority && (
-                                    <Badge variant="outline" className="text-xs">
-                                        {item.priority === "high" ? "Alta" : item.priority === "medium" ? "Média" : "Baixa"}
-                                    </Badge>
-                                    )}
-                                </div>
-                                </li>
-                            ))}
-                            </ul>
-                        )}
-                        </CardContent>
-                    </Card>
-                </div>
-                
-                {/* Sidebar da Análise (1/3) */}
-                <div className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                        <CardTitle>Aderência à Pauta</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                            {analysis.agenda_adherence}
-                        </p>
-                        </CardContent>
-                    </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <CheckCircle2 className="h-5 w-5 text-success" />
+                      Decisões Tomadas
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {analysis.decisions.length === 0 ? (
+                      <p className="text-muted-foreground">Nenhuma decisão foi tomada</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {analysis.decisions.map((decision: any, index: number) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p>{decision.decision}</p>
+                              {decision.responsible && (
+                                <p className="text-sm text-muted-foreground">
+                                  Responsável: {decision.responsible}
+                                </p>
+                              )}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </CardContent>
+                </Card>
 
-                    <Card>
-                        <CardHeader>
-                        <CardTitle>Recomendações</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                            {analysis.recommendations}
-                        </p>
-                        </CardContent>
-                    </Card>
-                </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertCircle className="h-5 w-5 text-primary" />
+                      Itens de Ação
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {analysis.action_items.length === 0 ? (
+                      <p className="text-muted-foreground">Nenhum item de ação definido</p>
+                    ) : (
+                      <ul className="space-y-3">
+                        {analysis.action_items.map((item: any, index: number) => (
+                          <li key={index} className="border-l-2 border-primary pl-3">
+                            <p className="font-medium">{item.task}</p>
+                            <div className="flex flex-wrap gap-2 mt-1 text-sm text-muted-foreground">
+                              {item.responsible && <span>Responsável: {item.responsible}</span>}
+                              {item.priority && (
+                                <Badge variant="outline" className="text-xs">
+                                  {item.priority === "high" ? "Alta" : item.priority === "medium" ? "Média" : "Baixa"}
+                                </Badge>
+                              )}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Sidebar da Análise (1/3) */}
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Aderência à Pauta</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {analysis.agenda_adherence}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Recomendações</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {analysis.recommendations}
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           )}
 

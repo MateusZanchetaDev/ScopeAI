@@ -11,6 +11,7 @@ interface Analysis {
   meetingTitle: string;
   productivity_score: number;
   summary: string;
+  createdAt: number;
 }
 
 const AnalysisPage = () => {
@@ -37,10 +38,15 @@ const AnalysisPage = () => {
               meetingTitle: data.meetingTitle || `Reunião ${meetingId}`,
               productivity_score: score,
               summary: data.summary,
+              createdAt: data.createdAt || 0, // pega o timestamp
             });
           }
         }
       }
+
+      // Ordena do mais recente para o mais antigo
+      items.sort((a, b) => b.createdAt - a.createdAt);
+
       setAnalyses(items);
     } catch (error) {
       console.error("Erro ao carregar análises do localStorage:", error);
@@ -61,6 +67,7 @@ const AnalysisPage = () => {
         Carregando análises...
       </div>
     );
+
   if (analyses.length === 0)
     return (
       <div className="min-h-screen flex flex-col">
@@ -73,41 +80,40 @@ const AnalysisPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navbar fixa */}
       <Navbar />
 
       <div className="container mx-auto px-4 py-8">
-        {/* Cabeçalho da Página */}
+        {/* Cabeçalho */}
         <div className="flex items-center justify-between mb-8">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2">
-            <ArrowLeft className="h-4 w-4" /> Voltar
+          <Button variant="ghost" onClick={() => navigate(-1)} className="gap-3 text-lg sm:text-xl">
+            <ArrowLeft className="h-6 w-6 sm:h-8 sm:w-8" /> Voltar
           </Button>
           <h1 className="text-3xl font-bold text-foreground">Análises de Reuniões</h1>
-          <div /> {/* placeholder para alinhamento */}
+          <div />
         </div>
 
-        {/* Grid de Cards */}
-        <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2">
+        {/* Cards empilhados */}
+        <div className="flex flex-col gap-8">
           {analyses.map((a) => (
             <Card
               key={a.meetingId}
-              className="shadow-md border border-border rounded-2xl hover:shadow-lg transition-all"
+              className="shadow-lg border border-border rounded-2xl hover:shadow-xl transition-all p-6"
             >
-              <CardHeader className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="bg-primary/10 rounded-full p-3">
-                    <CalendarCheck className="h-6 w-6 text-primary" />
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="bg-primary/10 rounded-full p-5">
+                    <CalendarCheck className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
                   </div>
-                  <CardTitle className="text-lg font-semibold text-foreground">
+                  <CardTitle className="text-3xl sm:text-4xl font-bold text-foreground">
                     {a.meetingTitle}
                   </CardTitle>
                 </div>
-                <Badge className={getScoreColor(a.productivity_score)}>
+                <Badge className={`${getScoreColor(a.productivity_score)} text-xl sm:text-2xl px-6 py-4`}>
                   {a.productivity_score.toFixed(1)}/10
                 </Badge>
               </CardHeader>
 
-              <CardContent className="text-muted-foreground whitespace-pre-wrap text-sm">
+              <CardContent className="text-foreground whitespace-pre-wrap text-xl sm:text-2xl leading-relaxed mt-4">
                 {a.summary}
               </CardContent>
             </Card>

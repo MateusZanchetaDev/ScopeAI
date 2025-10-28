@@ -142,7 +142,11 @@ const NewMeeting = () => {
         if (agendaError) throw agendaError;
       }
 
-      toast.success("Reunião criada com sucesso!");
+      toast.success(
+        <span className="text-lg font-bold">
+          Reunião criada com sucesso!
+        </span>
+      );
       navigate(`/meeting/${meeting.id}`);
     } catch (error) {
       console.error("Error creating meeting:", error);
@@ -155,7 +159,7 @@ const NewMeeting = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         <Button
           variant="ghost"
@@ -173,7 +177,7 @@ const NewMeeting = () => {
               Preencha as informações da reunião e construa a pauta
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Basic Info */}
