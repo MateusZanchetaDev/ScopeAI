@@ -58,8 +58,12 @@ Para rodar o backend da aplicação.
 
 3.	Funcionalidade principal: executar fluxo principal do produto (criar escopo, gerar transcrição, emitir relatório) e confirmar resultado esperado.
 Ao final vamos colocar um exemplo de escopo e transcrição para realizar o upload na ferramenta e comparar o escopo com a transcrição.
-[1-🗂️ Exemplo para preencher o escopo da reunião.txt](https://github.com/user-attachments/files/23198746/1-.Exemplo.para.preencher.o.escopo.da.reuniao.txt)
-[Uploading 🎤 TRANSCRIÇÃO DA REUNIÃO.txt…]()
+
 ________________________________________
+[1-🗂️ Exemplo para preencher o escopo da reunião.txt](https://github.com/user-attachments/files/23198746/1-.Exemplo.para.preencher.o.escopo.da.reuniao.txt)
+________________________________________
+[🎤 TRANSCRIÇÃO DA REUNIÃO.txt](https://github.com/user-attachments/files/23198771/TRANSCRICAO.DA.REUNIAO.txt)
+________________________________________
+
 7) Critérios de aceitação (o que significa “validado”)
 •	Se o processamento da IA na comparação entre Escopo Reunião + Transcrição, foi realizada com sucesso, e conseguir gerar o resumo e o Score abordado.
